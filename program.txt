@@ -1,3 +1,9 @@
-firstName is "Chandan"
-lastName is "Relekar"
+say "Hello, World!"
+
+firstName is "Jane"
+lastName is "Doe"
 print firstName and lastName
+
+a is 3
+b is 4
+print sqrt(a^2 + b^2)

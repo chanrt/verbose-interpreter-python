@@ -9,7 +9,7 @@ if __name__ == "__main__":
     lines = string.split("\n")
 
     for line in lines:
-        analyser = Analyser(line, debug = True)
-        evaluator = Evaluator(analyser.line_stack, echo = False, debug = True)
+        analyser = Analyser(line, debug = False)
+        evaluator = Evaluator(analyser.line_stack, echo = False, debug = False)
 
     file.close()

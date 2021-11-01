@@ -2,7 +2,7 @@ import functions
 
 function_definitions = []
 
-unary_operations = ["SIN", "COS", "TAN"]
+unary_operations = ["SQRT", "CBRT", "SIN", "COS", "TAN"]
 binary_operations = ["ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "POW"]
 
 class FunctionDefiner:
@@ -24,6 +24,7 @@ newFunction(["cosec"], functions.cosec, "COSEC")
 newFunction(["sec"], functions.sec, "SEC")
 newFunction(["cot"], functions.cot, "COT")
 newFunction(["sqrt"], functions.sqrt, "SQRT")
+newFunction(["cbrt"], functions.cbrt, "CBRT")
 
 # Binary operations
 newFunction(["^"], functions.pow, "POW")

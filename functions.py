@@ -18,6 +18,9 @@ def pow(a, b):
 def sqrt(a):
     return math.sqrt(a)
 
+def cbrt(a):
+    return math.pow(a, 1/3)
+
 def sin(a):
     return math.sin(a)
 

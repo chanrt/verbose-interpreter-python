@@ -1,6 +1,7 @@
 class Variables:
     def __init__(self):
         self.stack = []
+        self.num_default_vars = 0
 
     def printStack(self):
         output_string = "VARIABLE STACK: "
@@ -17,6 +18,17 @@ class Variables:
         for index, variable in enumerate(self.stack):
             if variable.name == name:
                 self.stack.pop(index)
+
+    def getNumVars(self):
+        return len(self.stack) - self.num_default_vars
+
+    def writeToLogs(self):
+        logs = open("logs.txt", "a")
+        output_string = "VARIABLE STACK: "
+        for variable in self.stack:
+            output_string += variable.getString() + ", "
+        logs.write(output_string)
+        logs.close()
 
 vars = Variables()
 

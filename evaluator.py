@@ -3,11 +3,12 @@ from variables import vars
 from function_definitions import function_definitions, unary_operations, binary_operations
 
 class Evaluator:
-    def __init__(self, stack, depth = 0, echo = False, debug = False):
+    def __init__(self, stack, depth = 0, echo = False, debug = False, log = False):
         self.stack = stack
         self.depth = depth
         self.echo = echo
         self.debug = debug
+        self.log = log
         self.evaluate()
 
     def replaceKnownVars(self):
@@ -74,6 +75,9 @@ class Evaluator:
             vars.printStack()
             print(self)
 
+        if self.log and vars.getNumVars() > 0:
+            vars.writeToLogs()
+
         # Substitute vars
         self.replaceKnownVars()
 
@@ -93,6 +97,11 @@ class Evaluator:
 
                 if self.debug:
                     print(self)
+
+                if self.log:
+                    logs = open("logs.txt", "a")
+                    logs.write(self.__str__() + "\n")
+                    logs.close
         
         # Carry out unary operations
         for operation in function_definitions:
@@ -108,6 +117,11 @@ class Evaluator:
 
                         if self.debug:
                             print(self)
+
+                        if self.log:
+                            logs = open("logs.txt", "a")
+                            logs.write(self.__str__() + "\n")
+                            logs.close
 
         # Carry out binary operations
         for operation in function_definitions:
@@ -126,6 +140,11 @@ class Evaluator:
                         if self.debug:
                             print(self)
 
+                        if self.log:
+                            logs = open("logs.txt", "a")
+                            logs.write(self.__str__() + "\n")
+                            logs.close
+
         # Carry out assignments
         for position, item in enumerate(self.stack):
             if item.type == "ASSIGN":
@@ -140,6 +159,11 @@ class Evaluator:
 
                 if self.debug:
                     print(self)
+
+                if self.log:
+                    logs = open("logs.txt", "a")
+                    logs.write(self.__str__() + "\n")
+                    logs.close
 
         # Print anything
         for position, item in enumerate(self.stack):

@@ -8,11 +8,12 @@ operators = "+-*/%=^!"
 syntax = "()"
 
 class Analyser:
-    def __init__(self, input_string, debug = False):
+    def __init__(self, input_string, debug = False, log = False):
         self.input_string = input_string
         self.position = 0
         self.line_stack = []
         self.debug = debug
+        self.log = log
         self.analyse()
 
     def analyse(self):
@@ -36,6 +37,11 @@ class Analyser:
         
         if self.debug:
             print(self)
+
+        if self.log:
+            logs = open("logs.txt", "a")
+            logs.write(self.__str__() + "\n")
+            logs.close()
 
     def insertNumber(self):
         number_string = ""

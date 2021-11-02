@@ -8,7 +8,8 @@
  
  program.txt contains a default program (shown below). Enter "python verbose.py program.txt" in cmd to see it's output
  
- `# A verbose program intended to showcase it's current features
+ ```
+# A verbose program intended to showcase it's current features
 # Type "python verbose.py program.txt" to run this program
 
 # Prints "Hello, World!"
@@ -33,7 +34,8 @@ print "Speed of light: " + 1 / sqrt($mu_0 * $epsilon_0)
 
 # Calculates and prints mean
 numbers are [1 2 3 4 5]
-print "Mean: " + (mean of numbers)`
+print "Mean: " + (mean of numbers)
+ ```
 
  Current Features:
  1) Basic arithmetic, combinatorics, trigonometric, logarithmic, hyperbolic and descriptive functions
@@ -45,8 +47,9 @@ print "Mean: " + (mean of numbers)`
  7) Commands in interpreter mode can be entered using the @ namespace (example: @vars for seeing all stored variables)
  8) A Line can be commenented out by entering # at the beginning
  9) File compiler mode generates logs inside the logs.txt file, containing the lexical, evaluator (at all depths) and variable stacks at various points in the program
+ 10) Arrays can be written and assigned to variables. Operations on arrays (like mean and lcm) have also been implemented. Array indexing remains
  
  Planned Features:
- 1) Arrays, loops and conditionals will be implemented (preferably in that order) for this language to have semblance of Turing completeness
+ 1) Arrays indexing, loops and conditionals will be implemented (preferably in that order) for this language to have semblance of Turing completeness
  2) Ability for the user to define functions
  3) Error reporting system. Currently, any errors will be shown from the python interpreter's viewpoint

@@ -123,3 +123,48 @@ def mean(list):
     for number in list:
         sum += number
     return sum / len(list)
+
+def variance(list):
+    avg = mean(list)
+    sum = 0
+
+    for number in list:
+        sum += math.pow(avg - number, 2)
+
+    return sum / len(list)
+
+def sd(list):
+    return math.sqrt(variance(list))
+
+def lcm(list):
+    current_num = max(list)
+
+    while True:
+        divide_all = True
+
+        for num in list:
+            if current_num % num != 0:
+                divide_all = False
+                break
+
+        if divide_all == True:
+            return current_num
+        current_num += 1
+
+def gcd(list):
+    current_num = min(list)
+
+    while current_num > 1:
+        divide_all = True
+
+        for num in list:
+            if num % current_num != 0:
+                divide_all = False
+                break
+
+        if divide_all == True:
+            return current_num
+        current_num -= 1
+
+    return 1
+        

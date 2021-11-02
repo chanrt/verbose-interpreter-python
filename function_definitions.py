@@ -99,6 +99,10 @@ newBinaryFunction(["C", "choose"], library.comb, "COMB")
 ##################
 
 newListFunction(["mean", "average"], library.mean, "MEAN")
+newListFunction(["sd", "std_dev"], library.sd, "SD")
+newListFunction(["variance"], library.variance, "VARIANCE")
+newListFunction(["lcm"], library.lcm, "LCM")
+newListFunction(["gcd", "hcf"], library.gcd, "GCD")
 
 #####################
 # Special functions #

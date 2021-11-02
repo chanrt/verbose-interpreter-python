@@ -7,16 +7,20 @@ say "Hello, World!"
 # Prints firstName and lastName together
 firstName is "Jane"
 lastName is "Doe"
-print firstName and lastName
+print "Full name: " + firstName and lastName
 
 # Finds hypotenuse of a triangle
 a = 3
 b = 4
-print sqrt of (a^2 + b^2)
+print "Hypotenuse = " + sqrt of (a square + b square)
 
 # Proves a trignometric identity
 angle = 20
-print sin(angle)^2 + cos(angle)^2
+print "sin^2 theta + cos^2 theta = " + (sin(angle)^2 + cos(angle)^2)
 
 # Calculates and prints speed of light from predefined constants
 print "Speed of light: " + 1 / sqrt($mu_0 * $epsilon_0)
+
+# Calculates and prints mean
+numbers are [1 2 3 4 5]
+print "Mean: " + (mean of numbers)

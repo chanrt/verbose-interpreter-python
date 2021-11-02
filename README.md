@@ -7,3 +7,5 @@
  To run a program written in a file, enter "python verbose.py <filename>" in cmd
  
  program.txt contains a default program. Enter "python verbose.py program.txt" in cmd to see it's output
+ 
+ Logs of a program run in the above manner are stored in logs.txt file

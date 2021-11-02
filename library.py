@@ -5,6 +5,10 @@ import math
 ####################
 
 def add(a, b):
+    if isinstance(a, str) and (isinstance(b, int) or isinstance(b, float)):
+        b = str(b)
+    elif (isinstance(a, int) or isinstance(a, float)) and isinstance(b, str):
+        a = str(a)
     return a + b
 
 def subtract(a, b):

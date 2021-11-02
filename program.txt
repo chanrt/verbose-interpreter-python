@@ -17,3 +17,6 @@ print sqrt(a^2 + b^2)
 # Proves a trignometric identity
 angle = 20
 print sin(angle)^2 + cos(angle)^2
+
+# Calculates and prints speed of light from predefined constants
+print "Speed of light: " + 1 / sqrt($mu_0 * $epsilon_0)

@@ -2,8 +2,6 @@ import sys, datetime
 from lexical_analyser import Analyser
 from evaluator import Evaluator
 
-
-
 if __name__ == "__main__":
     filename = sys.argv[1]
     file = open(filename, "r")

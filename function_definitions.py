@@ -1,4 +1,4 @@
-import functions
+import library
 
 function_definitions = []
 
@@ -31,62 +31,62 @@ def newSpecialFunction(identifiers, function, token_type, token_value = None):
 ####################
 
 # Reciprocal
-newUnaryFunction(["~", "reci"], functions.reci, "RECI")
+newUnaryFunction(["~", "reci"], library.reci, "RECI")
 
 # Factorial
-newUnaryFunction(["fact", "factorial"], functions.fact, "FACT")
+newUnaryFunction(["fact", "factorial"], library.fact, "FACT")
 
 # Trigonometric
-newUnaryFunction(["sin"], functions.sin, "SIN")
-newUnaryFunction(["cos"], functions.cos, "COS")
-newUnaryFunction(["tan"], functions.tan, "TAN")
-newUnaryFunction(["cosec", "csc"], functions.cosec, "COSEC")
-newUnaryFunction(["sec"], functions.sec, "SEC")
-newUnaryFunction(["cot"], functions.cot, "COT")
+newUnaryFunction(["sin"], library.sin, "SIN")
+newUnaryFunction(["cos"], library.cos, "COS")
+newUnaryFunction(["tan"], library.tan, "TAN")
+newUnaryFunction(["cosec", "csc"], library.cosec, "COSEC")
+newUnaryFunction(["sec"], library.sec, "SEC")
+newUnaryFunction(["cot"], library.cot, "COT")
 
 # Inverse trigonometric
-newUnaryFunction(["arcsin", "sininv"], functions.arcsin, "ARCSIN")
-newUnaryFunction(["arccos", "cosinv"], functions.arccos, "ARCCOS")
-newUnaryFunction(["arctan", "taninv"], functions.arctan, "ARCTAN")
+newUnaryFunction(["arcsin", "sininv"], library.arcsin, "ARCSIN")
+newUnaryFunction(["arccos", "cosinv"], library.arccos, "ARCCOS")
+newUnaryFunction(["arctan", "taninv"], library.arctan, "ARCTAN")
 
 # Hyperbolic
-newUnaryFunction(["sinh"], functions.sinh, "SINH")
-newUnaryFunction(["cosh"], functions.cosh, "COSH")
-newUnaryFunction(["tanh"], functions.tanh, "TANH")
+newUnaryFunction(["sinh"], library.sinh, "SINH")
+newUnaryFunction(["cosh"], library.cosh, "COSH")
+newUnaryFunction(["tanh"], library.tanh, "TANH")
 
 # Roots
-newUnaryFunction(["sqrt", "√"], functions.sqrt, "SQRT")
-newUnaryFunction(["cbrt", "∛"], functions.cbrt, "CBRT")
+newUnaryFunction(["sqrt", "√"], library.sqrt, "SQRT")
+newUnaryFunction(["cbrt", "∛"], library.cbrt, "CBRT")
 
 # Logarithmic and exponential
-newUnaryFunction(["ln", "log_e"], functions.ln, "LN")
-newUnaryFunction(["log", "log_10"], functions.log, "LOG")
-newUnaryFunction(["exp"], functions.exp, "EXP")
+newUnaryFunction(["ln", "log_e"], library.ln, "LN")
+newUnaryFunction(["log", "log_10"], library.log, "LOG")
+newUnaryFunction(["exp"], library.exp, "EXP")
 
 # Step functions
-newUnaryFunction(["floor", "gif"], functions.floor, "FLOOR")
-newUnaryFunction(["ceil", "ceiling"], functions.ceil, "CEIL")
-newUnaryFunction(["sign", "signum"], functions.sign, "SIGN")
+newUnaryFunction(["floor", "gif"], library.floor, "FLOOR")
+newUnaryFunction(["ceil", "ceiling"], library.ceil, "CEIL")
+newUnaryFunction(["sign", "signum"], library.sign, "SIGN")
 
 # Descriptive functions
-newUnaryFunction(["abs", "magn"], functions.abs, "ABS")
-newUnaryFunction(["frac", "fractional"], functions.frac, "FRAC")
+newUnaryFunction(["abs", "magn"], library.abs, "ABS")
+newUnaryFunction(["frac", "fractional"], library.frac, "FRAC")
 
 #####################
 # Binary operations #
 #####################
 
 # Basic Arithmetic
-newBinaryFunction(["^", "power"], functions.pow, "POW")
-newBinaryFunction(["/", "by"], functions.divide, "DIVIDE")
-newBinaryFunction(["*", "times"], functions.multiply, "MULTIPLY")
-newBinaryFunction(["+", "plus", "and"], functions.add, "ADD")
-newBinaryFunction(["-", "minus"], functions.subtract, "SUBTRACT")
-newBinaryFunction(["%", "mod"], functions.mod, "MOD")
+newBinaryFunction(["^", "power"], library.pow, "POW")
+newBinaryFunction(["/", "by"], library.divide, "DIVIDE")
+newBinaryFunction(["*", "times"], library.multiply, "MULTIPLY")
+newBinaryFunction(["+", "plus", "and"], library.add, "ADD")
+newBinaryFunction(["-", "minus"], library.subtract, "SUBTRACT")
+newBinaryFunction(["%", "mod"], library.mod, "MOD")
 
 # Combinatorics
-newBinaryFunction(["P", "permutes"], functions.perm, "PERM")
-newBinaryFunction(["C", "choose"], functions.comb, "COMB")
+newBinaryFunction(["P", "permutes"], library.perm, "PERM")
+newBinaryFunction(["C", "choose"], library.comb, "COMB")
 
 #####################
 # Special functions #

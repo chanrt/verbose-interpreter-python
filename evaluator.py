@@ -11,6 +11,113 @@ class Evaluator:
         self.log = log
         self.evaluate()
 
+    def processUnaryOperations(self):
+
+        for operation in function_definitions:
+            for position, item in enumerate(self.stack):
+                if item.type == operation.type:
+                    if operation.type in unary_operations:
+
+                        # Manage unary operations on negated numbers
+                        if self.stack[position + 1].type == "SUBTRACT":
+                            negated_number_token = Token("NUMBER", -self.stack[position + 2].value)
+                            self.stack[position + 1] = negated_number_token
+                            self.stack.pop(position + 2)
+
+                        right_number = self.stack[position + 1].value
+                        result = operation.function(right_number)
+
+                        new_token = Token("NUMBER", result)
+                        self.stack[position] = new_token
+                        self.stack.pop(position + 1)
+
+                        if self.debug:
+                            print(self)
+
+                        if self.log:
+                            logs = open("logs.txt", "a")
+                            logs.write(self.__str__() + "\n")
+                            logs.close
+
+    def processBinaryOperations(self):
+
+        for operation in function_definitions:
+            for position, item in enumerate(self.stack):
+                if item.type == operation.type:
+                    if operation.type in binary_operations:
+                        left_number = self.stack[position - 1].value
+                        right_number = self.stack[position + 1].value
+                        result = operation.function(left_number, right_number)
+
+                        new_token = Token("NUMBER", result)
+                        self.stack[position] = new_token
+                        self.stack.pop(position + 1)
+                        self.stack.pop(position - 1)
+                
+                        if self.debug:
+                            print(self)
+
+                        if self.log:
+                            logs = open("logs.txt", "a")
+                            logs.write(self.__str__() + "\n")
+                            logs.close
+
+    def makeAssignments(self):
+
+        for position, item in enumerate(self.stack):
+            if item.type == "ASSIGN":
+                left_variable = self.stack[position - 1].value
+                right_number = self.stack[position + 1].value
+                vars.add(left_variable, right_number)
+
+                if self.log:
+                    vars.writeToLogs()
+
+                new_token = Token("NUMBER", right_number)
+                self.stack[position] = new_token
+                self.stack.pop(position + 1)
+                self.stack.pop(position - 1)
+
+                if self.debug:
+                    print(self)
+
+                if self.log:
+                    logs = open("logs.txt", "a")
+                    logs.write(self.__str__() + "\n")
+                    logs.close
+
+    def processParentheses(self):
+
+        for position, item in enumerate(self.stack):
+            if item.type == "SYNTAX" and item.value == "LPAREN":
+                start_position = position
+                end_position = self.getClosingParen(position)
+                child_evaluator = Evaluator(self.stack[start_position + 1: end_position], self.depth + 1, self.echo, self.debug, self.log)
+                result = child_evaluator.getRemainingEntity()
+                self.stack[start_position] = Token("NUMBER", result)
+                
+                num_delete = end_position - start_position
+                while num_delete > 0:
+                    self.stack.pop(start_position + 1)
+                    num_delete -= 1
+
+                if self.debug:
+                    print(self)
+
+                if self.log:
+                    logs = open("logs.txt", "a")
+                    logs.write(self.__str__() + "\n")
+                    logs.close
+
+    def printStatements(self):
+
+        for position, item in enumerate(self.stack):
+            if item.type == "PRINT":
+                right_entity = self.stack[position + 1].value
+                print(right_entity)
+                self.stack.pop(position + 1)
+                self.stack.pop(position)
+
     def replaceKnownVars(self):
         position = 0
         while position < len(self.stack):
@@ -25,6 +132,23 @@ class Evaluator:
                             break
             position += 1
 
+    # key function
+    def evaluate(self):
+
+        if self.debug:
+            print(self)
+
+        self.replaceKnownVars()
+        self.processParentheses()
+        self.processUnaryOperations()
+        self.processBinaryOperations()
+        self.makeAssignments()
+        self.printStatements()
+        
+        if self.echo and self.somethingRemains():
+            self.printRemaining()
+
+    # Helper functions from here on
     def getOpenParen(self, position):
         current_position = position
         while current_position < len(self.stack):
@@ -68,118 +192,6 @@ class Evaluator:
 
         if len(remaining_entities) == 1:
             return remaining_entities[0]
-
-    def evaluate(self):
-
-        if self.debug:
-            vars.printStack()
-            print(self)
-
-        if self.log and vars.getNumVars() > 0:
-            vars.writeToLogs()
-
-        # Substitute vars
-        self.replaceKnownVars()
-
-        # Evaluate expressions inside brackets
-        for position, item in enumerate(self.stack):
-            if item.type == "SYNTAX" and item.value == "LPAREN":
-                start_position = position
-                end_position = self.getClosingParen(position)
-                child_evaluator = Evaluator(self.stack[start_position + 1: end_position], self.depth + 1)
-                result = child_evaluator.getRemainingEntity()
-                self.stack[start_position] = Token("NUMBER", result)
-                
-                num_delete = end_position - start_position
-                while num_delete > 0:
-                    self.stack.pop(start_position + 1)
-                    num_delete -= 1
-
-                if self.debug:
-                    print(self)
-
-                if self.log:
-                    logs = open("logs.txt", "a")
-                    logs.write(self.__str__() + "\n")
-                    logs.close
-        
-        # Carry out unary operations
-        for operation in function_definitions:
-            for position, item in enumerate(self.stack):
-                if item.type == operation.type:
-                    if operation.type in unary_operations:
-                        if self.stack[position + 1].type == "SUBTRACT":
-                            negated_number_token = Token("NUMBER", -self.stack[position + 2].value)
-                            self.stack[position + 1] = negated_number_token
-                            self.stack.pop(position + 2)
-
-                        right_number = self.stack[position + 1].value
-                        result = operation.function(right_number)
-
-                        new_token = Token("NUMBER", result)
-                        self.stack[position] = new_token
-                        self.stack.pop(position + 1)
-
-                        if self.debug:
-                            print(self)
-
-                        if self.log:
-                            logs = open("logs.txt", "a")
-                            logs.write(self.__str__() + "\n")
-                            logs.close
-
-        # Carry out binary operations
-        for operation in function_definitions:
-            for position, item in enumerate(self.stack):
-                if item.type == operation.type:
-                    if operation.type in binary_operations:
-                        left_number = self.stack[position - 1].value
-                        right_number = self.stack[position + 1].value
-                        result = operation.function(left_number, right_number)
-
-                        new_token = Token("NUMBER", result)
-                        self.stack[position] = new_token
-                        self.stack.pop(position + 1)
-                        self.stack.pop(position - 1)
-                
-                        if self.debug:
-                            print(self)
-
-                        if self.log:
-                            logs = open("logs.txt", "a")
-                            logs.write(self.__str__() + "\n")
-                            logs.close
-
-        # Carry out assignments
-        for position, item in enumerate(self.stack):
-            if item.type == "ASSIGN":
-                left_variable = self.stack[position - 1].value
-                right_number = self.stack[position + 1].value
-                vars.add(left_variable, right_number)
-
-                new_token = Token("NUMBER", right_number)
-                self.stack[position] = new_token
-                self.stack.pop(position + 1)
-                self.stack.pop(position - 1)
-
-                if self.debug:
-                    print(self)
-
-                if self.log:
-                    logs = open("logs.txt", "a")
-                    logs.write(self.__str__() + "\n")
-                    logs.close
-
-        # Print anything
-        for position, item in enumerate(self.stack):
-            if item.type == "PRINT":
-                right_entity = self.stack[position + 1].value
-                print(right_entity)
-                self.stack.pop(position + 1)
-                self.stack.pop(position)
-        
-        if self.echo and self.somethingRemains():
-            self.printRemaining()
 
     def printResult(self):
         print(f"RESULT: {self.getRemainingNumber()}")

@@ -1,10 +1,12 @@
 from token import Token
 from function_definitions import function_definitions
+from constants import constant_definitions
 
 numbers = "0123456789"
 allowed_var_chars = "_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 alphabets = "_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-operators = "+-*/%=^~"
+special_chars = "$"
+operators = "+-*/%=^~√∛"
 syntax = "()"
 
 class Analyser:
@@ -17,6 +19,10 @@ class Analyser:
         self.analyse()
 
     def analyse(self):
+        if len(self.input_string) == 0:
+            logs = open("logs.txt", "a")
+            logs.write(self.__str__() + "\n")
+            logs.close()
         if len(self.input_string) > 0 and self.input_string[0] == "#":
             self.input_string = ""
 
@@ -28,7 +34,7 @@ class Analyser:
                 self.position -= 1
             elif character == "'" or character == '"':
                 self.insertString(character)
-            elif character in alphabets:
+            elif character in alphabets + special_chars:
                 self.insertName()
                 self.position -= 1
             elif character in operators:
@@ -38,10 +44,10 @@ class Analyser:
             
             self.position += 1
         
-        if self.debug:
+        if self.debug and len(self.input_string) > 0:
             print(self)
 
-        if self.log:
+        if self.log and len(self.input_string) > 0:
             logs = open("logs.txt", "a")
             logs.write(self.__str__() + "\n")
             logs.close()
@@ -82,20 +88,15 @@ class Analyser:
     def insertName(self):
         name_string = ""
 
-        while self.position < len(self.input_string) and self.input_string[self.position] in allowed_var_chars:
+        while self.position < len(self.input_string) and self.input_string[self.position] in allowed_var_chars + special_chars:
             name_string += self.input_string[self.position]
             self.position += 1
 
-        token_resolved = False
-
-        # see if name matches a function
-        for function in function_definitions:
-            if name_string in function.identifiers:
-                function_token = Token(function.type, function.value)
-                self.line_stack.append(function_token)
-                token_resolved = True
-        
-        if not token_resolved:
+        if self.checkForFunctions(name_string):
+            pass
+        elif self.checkForConstants(name_string):
+            pass
+        else:
             name_token = Token("NAME", name_string)
             self.line_stack.append(name_token)
 
@@ -117,13 +118,32 @@ class Analyser:
             token_value = "RPAREN"
 
         symbol_token = Token("SYNTAX", token_value)
-        self.line_stack.append(symbol_token)
+        self.line_stack.append(symbol_token) 
+
+    def checkForFunctions(self, name_string):
+        for function in function_definitions:
+            if name_string in function.identifiers:
+                function_token = Token(function.type, function.value)
+                self.line_stack.append(function_token)
+                return True
+        return False
+
+    def checkForConstants(self, name_string):
+        for constant in constant_definitions:
+            if name_string in constant.identifiers:
+                constant_token = Token("NUMBER", constant.value)
+                self.line_stack.append(constant_token)
+                return True
+        return False
 
     def __str__(self):
-        output_string = "LINE STACK: "
-        for token in self.line_stack:
-            output_string += token.getString() + " "
-        return output_string 
+        if len(self.line_stack) > 0:
+            output_string = "LINE STACK: "
+            for token in self.line_stack:
+                output_string += token.getString() + " "
+            return output_string 
+        else:
+            return ""
 
 
 

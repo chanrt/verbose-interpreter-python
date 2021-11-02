@@ -1,6 +1,7 @@
 from token import Token
 from function_definitions import function_definitions
 from constants import constant_definitions
+from placeholder import placeholder_definitions
 
 numbers = "0123456789"
 allowed_var_chars = "_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
@@ -98,6 +99,8 @@ class Analyser:
             pass
         elif self.checkForConstants(name_string):
             pass
+        elif self.checkForPlaceholders(name_string):
+            pass
         else:
             name_token = Token("NAME", name_string)
             self.line_stack.append(name_token)
@@ -159,6 +162,15 @@ class Analyser:
             if name_string in constant.identifiers:
                 constant_token = Token("NUMBER", constant.value)
                 self.line_stack.append(constant_token)
+                return True
+        return False
+
+    def checkForPlaceholders(self, name_string):
+        for placeholder in placeholder_definitions:
+            if name_string in placeholder.identifiers:
+                self.input_string = self.input_string.replace(name_string, placeholder.replacement)
+                self.line_stack = []
+                self.position = 0
                 return True
         return False
 

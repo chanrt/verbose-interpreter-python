@@ -98,7 +98,7 @@ newBinaryFunction(["C", "choose"], library.comb, "COMB")
 # List functions #
 ##################
 
-newListFunction(["mean", "average"], library.mean, "MEAN")
+newListFunction(["mean", "avg", "average"], library.mean, "MEAN")
 newListFunction(["sd", "std_dev"], library.sd, "SD")
 newListFunction(["variance"], library.variance, "VARIANCE")
 newListFunction(["lcm"], library.lcm, "LCM")
@@ -109,4 +109,4 @@ newListFunction(["gcd", "hcf"], library.gcd, "GCD")
 #####################
 
 newSpecialFunction(["print", "say", "display"], None, "PRINT")
-newSpecialFunction(["=", "isEqualTo", "is"], None, "ASSIGN")
+newSpecialFunction(["=", "isEqualTo", "is", "are"], None, "ASSIGN")

@@ -12,7 +12,7 @@ print firstName and lastName
 # Finds hypotenuse of a triangle
 a = 3
 b = 4
-print sqrt(a^2 + b^2)
+print sqrt of (a^2 + b^2)
 
 # Proves a trignometric identity
 angle = 20

@@ -17,6 +17,9 @@ class Analyser:
         self.analyse()
 
     def analyse(self):
+        if len(self.input_string) > 0 and self.input_string[0] == "#":
+            self.input_string = ""
+
         while self.position < len(self.input_string):
             character = self.input_string[self.position]
 

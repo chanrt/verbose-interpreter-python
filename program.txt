@@ -1,12 +1,19 @@
+# A verbose program intended to showcase it's current features
+# Type "python verbose.py program.txt" to run this program
+
+# Prints "Hello, World!"
 say "Hello, World!"
 
+# Prints firstName and lastName together
 firstName is "Jane"
 lastName is "Doe"
 print firstName and lastName
 
-a is 3
-b is 4
+# Finds hypotenuse of a triangle
+a = 3
+b = 4
 print sqrt(a^2 + b^2)
 
-angle is 20
+# Proves a trignometric identity
+angle = 20
 print sin(angle)^2 + cos(angle)^2

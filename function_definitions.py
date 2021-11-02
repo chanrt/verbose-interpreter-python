@@ -92,5 +92,5 @@ newBinaryFunction(["C", "choose"], functions.comb, "COMB")
 # Special functions #
 #####################
 
-newSpecialFunction(["print", "say"], None, "PRINT")
+newSpecialFunction(["print", "say", "display"], None, "PRINT")
 newSpecialFunction(["=", "isEqualTo", "is"], None, "ASSIGN")

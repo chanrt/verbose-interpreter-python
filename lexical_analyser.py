@@ -4,7 +4,7 @@ from function_definitions import function_definitions
 numbers = "0123456789"
 allowed_var_chars = "_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 alphabets = "_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-operators = "+-*/%=^!"
+operators = "+-*/%=^~"
 syntax = "()"
 
 class Analyser:

@@ -7,3 +7,6 @@ print firstName and lastName
 a is 3
 b is 4
 print sqrt(a^2 + b^2)
+
+angle is 20
+print sin(angle)^2 + cos(angle)^2

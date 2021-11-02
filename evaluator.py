@@ -108,6 +108,11 @@ class Evaluator:
             for position, item in enumerate(self.stack):
                 if item.type == operation.type:
                     if operation.type in unary_operations:
+                        if self.stack[position + 1].type == "SUBTRACT":
+                            negated_number_token = Token("NUMBER", -self.stack[position + 2].value)
+                            self.stack[position + 1] = negated_number_token
+                            self.stack.pop(position + 2)
+
                         right_number = self.stack[position + 1].value
                         result = operation.function(right_number)
 

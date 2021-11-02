@@ -27,7 +27,7 @@ class Variables:
         output_string = "VARIABLE STACK: "
         for variable in self.stack:
             output_string += variable.getString() + ", "
-        logs.write(output_string)
+        logs.write(output_string + "\n")
         logs.close()
 
 vars = Variables()

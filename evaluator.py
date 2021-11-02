@@ -1,6 +1,6 @@
 from token import Token
 from variables import vars
-from function_definitions import function_definitions, unary_operations, binary_operations
+from function_definitions import function_definitions, unary_operations, binary_operations, list_operations
 
 class Evaluator:
     def __init__(self, stack, depth = 0, echo = False, debug = False, log = False):
@@ -67,13 +67,13 @@ class Evaluator:
         for position, item in enumerate(self.stack):
             if item.type == "ASSIGN":
                 left_variable = self.stack[position - 1].value
-                right_number = self.stack[position + 1].value
-                vars.add(left_variable, right_number)
+                right_entity = self.stack[position + 1]
+                vars.add(left_variable, right_entity.value, right_entity.items)
 
                 if self.log:
                     vars.writeToLogs()
 
-                new_token = Token("NUMBER", right_number)
+                new_token = Token(right_entity.type, right_entity.value, right_entity.items)
                 self.stack[position] = new_token
                 self.stack.pop(position + 1)
                 self.stack.pop(position - 1)
@@ -127,21 +127,49 @@ class Evaluator:
                 if position + 1 >= len(self.stack) or self.stack[position + 1].type != "ASSIGN":
                     for variable in vars.stack:
                         if variable.name == name:
-                            number_token = Token("NUMBER", variable.value)
-                            self.stack[position] = number_token
-                            break
+                            if variable.value is not None:
+                                new_token = Token(Token.getTypeFromValue(variable.value), variable.value)
+                                self.stack[position] = new_token
+                                break
+                            elif variable.items is not None:
+                                new_token = Token("LIST", None, variable.items)
+                                self.stack[position] = new_token
+                                break
             position += 1
 
     # key function
     def evaluate(self):
+        self.replaceKnownVars()
 
         if self.debug:
             print(self)
 
-        self.replaceKnownVars()
         self.processParentheses()
         self.processUnaryOperations()
         self.processBinaryOperations()
+        
+        for operation in function_definitions:
+            for position, item in enumerate(self.stack):
+                if item.type == operation.type:
+                    if operation.type in list_operations:
+                        right_list = self.stack[position + 1]
+                        list = []
+                        for item in right_list.items:
+                            list.append(item.value)
+                        result = operation.function(list)
+
+                        new_token = Token("NUMBER", result)
+                        self.stack[position] = new_token
+                        self.stack.pop(position + 1)
+
+                        if self.debug:
+                            print(self)
+
+                        if self.log:
+                            logs = open("logs.txt", "a")
+                            logs.write(self.__str__() + "\n")
+                            logs.close
+
         self.makeAssignments()
         self.printStatements()
         

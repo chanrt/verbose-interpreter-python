@@ -41,6 +41,8 @@ class Analyser:
                 self.insertOperator()
             elif character in syntax:
                 self.insertSyntax()
+            elif character == "[":
+                self.insertList()
             
             self.position += 1
         
@@ -119,6 +121,30 @@ class Analyser:
 
         symbol_token = Token("SYNTAX", token_value)
         self.line_stack.append(symbol_token) 
+
+    def insertList(self):
+        start_position = self.position
+        stop_position = self.getClosingSquareBracket(self.position)
+
+        child_analyser = Analyser(self.input_string[start_position + 1: stop_position], False, False)
+        items_stack = child_analyser.line_stack
+
+        new_list = Token("LIST", items = items_stack)
+        self.line_stack.append(new_list)  
+        self.position = stop_position      
+
+    def getClosingSquareBracket(self, position):
+        num_opened = 0
+        current_position = position
+        while current_position < len(self.input_string):
+            if self.input_string[current_position] == "[":
+                num_opened += 1
+            elif self.input_string[current_position] == "]":
+                num_opened -= 1
+            if num_opened == 0:
+                return current_position
+            current_position += 1
+        return -1
 
     def checkForFunctions(self, name_string):
         for function in function_definitions:

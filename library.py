@@ -115,3 +115,11 @@ def abs(a):
 
 def frac(a):
     return a - math.floor(a)
+
+# List operations
+
+def mean(list):
+    sum = 0
+    for number in list:
+        sum += number
+    return sum / len(list)

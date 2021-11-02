@@ -4,6 +4,7 @@ function_definitions = []
 
 unary_operations = []
 binary_operations = []
+list_operations = []
 
 class FunctionDefiner:
     def __init__(self, identifiers, function, token_type, token_value):
@@ -21,6 +22,11 @@ def newBinaryFunction(identifiers, function, token_type, token_value = None):
     new_function = FunctionDefiner(identifiers, function, token_type, token_value)
     function_definitions.append(new_function)
     binary_operations.append(token_type)
+
+def newListFunction(identifiers, function, token_type, token_value = None):
+    new_function = FunctionDefiner(identifiers, function, token_type, token_value)
+    function_definitions.append(new_function)
+    list_operations.append(token_type)
 
 def newSpecialFunction(identifiers, function, token_type, token_value = None):
     new_function = FunctionDefiner(identifiers, function, token_type, token_value)
@@ -87,6 +93,12 @@ newBinaryFunction(["%", "mod"], library.mod, "MOD")
 # Combinatorics
 newBinaryFunction(["P", "permutes"], library.perm, "PERM")
 newBinaryFunction(["C", "choose"], library.comb, "COMB")
+
+##################
+# List functions #
+##################
+
+newListFunction(["mean", "average"], library.mean, "MEAN")
 
 #####################
 # Special functions #

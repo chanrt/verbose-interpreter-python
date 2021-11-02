@@ -9,9 +9,9 @@ class Variables:
             output_string += variable.getString() + ", "
         print(output_string)
 
-    def add(self, name, value):
+    def add(self, name, value, items):
         self.removeAny(name)
-        new_variable = Variable(name, value)
+        new_variable = Variable(name, value, items)
         self.stack.append(new_variable)
 
     def removeAny(self, name):
@@ -33,9 +33,16 @@ class Variables:
 vars = Variables()
 
 class Variable:
-    def __init__(self, name, value):
+    def __init__(self, name, value, items):
         self.name = name
         self.value = value
+        self.items = items
 
     def getString(self):
-        return f"{self.name}:{self.value}"
+        if self.value is not None:
+            return f"{self.name}:{self.value}"
+        else:
+            output_string = f"{self.name} with items: "
+            for item in self.items:
+                output_string += f"{item.type}:{item.value}, "
+            return output_string

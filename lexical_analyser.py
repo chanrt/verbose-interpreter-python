@@ -138,7 +138,7 @@ class Analyser:
 
     def __str__(self):
         if len(self.line_stack) > 0:
-            output_string = "LINE STACK: "
+            output_string = "LEXICAL STACK: "
             for token in self.line_stack:
                 output_string += token.getString() + " "
             return output_string 

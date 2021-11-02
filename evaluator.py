@@ -197,7 +197,7 @@ class Evaluator:
         print(f"RESULT: {self.getRemainingNumber()}")
 
     def __str__(self):
-        output_string = f"INTERPRETER STACK (depth {self.depth}): "
+        output_string = f"EVALUATOR STACK (depth {self.depth}): "
         for token in self.stack:
             output_string += token.getString() + " "
         return output_string

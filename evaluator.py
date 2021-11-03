@@ -1,6 +1,7 @@
 from token import Token
 from variables import vars
-from function_definitions import function_definitions, unary_operations, binary_operations, list_operations
+from function_definitions import function_definitions, unary_operations, binary_operations, boolean_operations, list_operations
+import library
 
 class Evaluator:
     def __init__(self, stack, depth = 0, echo = False, debug = False, log = False):
@@ -40,6 +41,27 @@ class Evaluator:
         for operation in function_definitions:
             for position, item in enumerate(self.stack):
                 if item.type == operation.type and operation.type in binary_operations:
+                    left_number = self.stack[position - 1].value
+                    right_number = self.stack[position + 1].value
+                    result = operation.function(left_number, right_number)
+
+                    new_token = Token("NUMBER", result)
+                    self.stack[position] = new_token
+                    self.stack.pop(position + 1)
+                    self.stack.pop(position - 1)
+                
+                    if self.debug:
+                        print(self)
+
+                    if self.log:
+                        logs = open("logs.txt", "a")
+                        logs.write(self.__str__() + "\n")
+                        logs.close
+    
+    def processBooleanOperations(self):
+        for operation in function_definitions:
+            for position, item in enumerate(self.stack):
+                if item.type == operation.type and operation.type in boolean_operations:
                     left_number = self.stack[position - 1].value
                     right_number = self.stack[position + 1].value
                     result = operation.function(left_number, right_number)
@@ -171,6 +193,18 @@ class Evaluator:
                     pass
             position += 1
 
+    def handleLoops(self):
+        if len(self.stack) > 1 and self.stack[0].value == "while" and self.stack[1].type == "CONDITION" and self.stack[2].type == "BLOCK":
+            while True:
+                condition_evaluator = Evaluator(self.stack[1].items.copy(), self.depth + 1, False, False, False)
+                if condition_evaluator.getBoolResult() == True:
+                    block_statements = library.split_stack(self.stack[2].items.copy())
+                    for statement in block_statements:
+                        statement_evaluator = Evaluator(statement, self.depth + 1, False, False, False)
+                else:
+                    # while loop condition is false
+                    break
+
     # key function
     def evaluate(self):
         self.replaceKnownVars()
@@ -180,8 +214,10 @@ class Evaluator:
             print(self)
 
         self.processParentheses()
+        self.handleLoops()
         self.processUnaryOperations()
         self.processBinaryOperations()
+        self.processBooleanOperations()
         self.processListOperations()
         self.makeAssignments()
         self.printStatements()
@@ -231,11 +267,24 @@ class Evaluator:
             if item.type == "NUMBER" or item.type == "STRING":
                 remaining_entities.append(item)
 
-        if len(remaining_entities) == 1:
+        if len(remaining_entities) == 0:
+            return None
+        elif len(remaining_entities) == 1:
             return remaining_entities[0]
 
     def printResult(self):
         print(f"RESULT: {self.getRemainingNumber()}")
+
+    def getBoolResult(self):
+        remaining_entity = self.getRemainingEntity()
+
+        if remaining_entity is None:
+            return False
+        if remaining_entity.type == "NUMBER":
+            if remaining_entity.value == 0:
+                return False
+            else:
+                return True
 
     def __str__(self):
         output_string = f"EVALUATOR STACK (depth {self.depth}): "

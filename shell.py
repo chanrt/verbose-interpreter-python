@@ -1,4 +1,5 @@
 from commands import CommandManager
+import library
 from lexical_analyser import Analyser
 from evaluator import Evaluator
 
@@ -17,6 +18,11 @@ if __name__ == "__main__":
             CommandManager.execute(input_string)
         else:
             analyser = Analyser(input_string, debug = debug_status)
-            evaluator = Evaluator(analyser.line_stack, echo = True, debug = debug_status)
+            line_stack = analyser.line_stack
+
+            statements = library.split_stack(line_stack)
+
+            for statement in statements:
+                evaluator = Evaluator(statement, echo = True, debug = debug_status)
 
         

@@ -7,8 +7,8 @@ numbers = "0123456789"
 allowed_var_chars = "_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 alphabets = "_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 special_chars = "$"
-operators = "+-*/%=^~√∛"
-syntax = "()"
+operators = "+-*/%=^~√∛<>"
+syntax = "();"
 
 class Analyser:
     def __init__(self, input_string, debug = False, log = False):
@@ -27,6 +27,8 @@ class Analyser:
         if len(self.input_string) > 0 and self.input_string[0] == "#":
             self.input_string = ""
 
+        self.checkForPlaceholders()
+
         while self.position < len(self.input_string):
             character = self.input_string[self.position]
 
@@ -44,6 +46,10 @@ class Analyser:
                 self.insertSyntax()
             elif character == "[":
                 self.insertList()
+            elif character == "`":
+                self.insertCondition()
+            elif character == "{":
+                self.insertBlock()
             
             self.position += 1
         
@@ -99,8 +105,6 @@ class Analyser:
             pass
         elif self.checkForConstants(name_string):
             pass
-        elif self.checkForPlaceholders(name_string):
-            pass
         else:
             name_token = Token("NAME", name_string)
             self.line_stack.append(name_token)
@@ -121,6 +125,8 @@ class Analyser:
             token_value = "LPAREN"
         elif character == ")":
             token_value = "RPAREN"
+        elif character == ";":
+            token_value = "PERIOD"
 
         symbol_token = Token("SYNTAX", token_value)
         self.line_stack.append(symbol_token) 
@@ -134,20 +140,29 @@ class Analyser:
 
         new_list = Token("LIST", items = items_stack)
         self.line_stack.append(new_list)  
-        self.position = stop_position      
+        self.position = stop_position 
 
-    def getClosingSquareBracket(self, position):
-        num_opened = 0
-        current_position = position
-        while current_position < len(self.input_string):
-            if self.input_string[current_position] == "[":
-                num_opened += 1
-            elif self.input_string[current_position] == "]":
-                num_opened -= 1
-            if num_opened == 0:
-                return current_position
-            current_position += 1
-        return -1
+    def insertCondition(self):
+        start_position = self.position
+        stop_position = self.getClosingTick(self.position + 1)    
+
+        child_analyser = Analyser(self.input_string[start_position + 1: stop_position], False, False)
+        condition_items = child_analyser.line_stack
+
+        new_condition = Token("CONDITION", items = condition_items)
+        self.line_stack.append(new_condition)
+        self.position = stop_position
+
+    def insertBlock(self):
+        start_position = self.position
+        stop_position = self.getClosingBrace(self.position)
+
+        child_analyser = Analyser(self.input_string[start_position + 1: stop_position], False, False)
+        block_items = child_analyser.line_stack
+
+        new_block = Token("BLOCK", items = block_items)
+        self.line_stack.append(new_block)
+        self.position = stop_position
 
     def checkForFunctions(self, name_string):
         for function in function_definitions:
@@ -165,14 +180,44 @@ class Analyser:
                 return True
         return False
 
-    def checkForPlaceholders(self, name_string):
+    def checkForPlaceholders(self):
         for placeholder in placeholder_definitions:
-            if name_string in placeholder.identifiers:
-                self.input_string = self.input_string.replace(name_string, placeholder.replacement)
-                self.line_stack = []
-                self.position = 0
-                return True
-        return False
+            for identifier in placeholder.identifiers:
+                self.input_string = self.input_string.replace(identifier, placeholder.replacement)
+
+    def getClosingSquareBracket(self, position):
+        num_opened = 0
+        current_position = position
+        while current_position < len(self.input_string):
+            if self.input_string[current_position] == "[":
+                num_opened += 1
+            elif self.input_string[current_position] == "]":
+                num_opened -= 1
+            if num_opened == 0:
+                return current_position
+            current_position += 1
+        return -1
+
+    def getClosingTick(self, position):
+        current_position = position
+        while current_position < len(self.input_string):
+            if self.input_string[current_position] == "`":
+                return current_position
+            current_position += 1
+        return -1
+
+    def getClosingBrace(self, position):
+        num_opened = 0
+        current_position = position
+        while current_position < len(self.input_string):
+            if self.input_string[current_position] == "{":
+                num_opened += 1
+            elif self.input_string[current_position] == "}":
+                num_opened -= 1
+            if num_opened == 0:
+                return current_position
+            current_position += 1
+        return -1
 
     def __str__(self):
         if len(self.line_stack) > 0:

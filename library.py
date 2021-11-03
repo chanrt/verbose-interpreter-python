@@ -1,5 +1,22 @@
 import math
 
+def split_stack(line_stack):
+    statements = []
+    new_statement = []
+
+    position = 0
+    while position < len(line_stack) :
+        if not (line_stack[position].type == "SYNTAX" and line_stack[position].value == "PERIOD"):
+            new_statement.append(line_stack[position])
+        else:
+            statements.append(new_statement)
+            new_statement = []
+        position += 1
+            
+    if len(new_statement) > 0:
+        statements.append(new_statement)
+    return statements
+
 ####################
 # Binary functions #
 ####################
@@ -31,6 +48,28 @@ def perm(a, b):
 
 def comb(a, b):
     return math.factorial(a) / (math.factorial(b) * math.factorial(a - b))
+
+#####################
+# Boolean functions #
+#####################
+
+def lesser(a, b):
+    if a < b:
+        return 1
+    else:
+        return 0
+
+def greater(a, b):
+    if a > b:
+        return 1
+    else:
+        return 0
+
+def equals(a, b):
+    if a == b:
+        return 1
+    else:
+        return 0
 
 ###################
 # Unary functions #

@@ -4,6 +4,7 @@ function_definitions = []
 
 unary_operations = []
 binary_operations = []
+boolean_operations = []
 list_operations = []
 
 class FunctionDefiner:
@@ -22,6 +23,11 @@ def newBinaryFunction(identifiers, function, token_type, token_value = None):
     new_function = FunctionDefiner(identifiers, function, token_type, token_value)
     function_definitions.append(new_function)
     binary_operations.append(token_type)
+
+def newBooleanFunction(identifiers, function, token_type, token_value = None):
+    new_function = FunctionDefiner(identifiers, function, token_type, token_value)
+    function_definitions.append(new_function)
+    boolean_operations.append(token_type)
 
 def newListFunction(identifiers, function, token_type, token_value = None):
     new_function = FunctionDefiner(identifiers, function, token_type, token_value)
@@ -93,6 +99,14 @@ newBinaryFunction(["%", "mod"], library.mod, "MOD")
 # Combinatorics
 newBinaryFunction(["P", "permutes"], library.perm, "PERM")
 newBinaryFunction(["C", "choose"], library.comb, "COMB")
+
+######################
+# Boolean operations #
+######################
+
+newBinaryFunction(["<"], library.lesser, "LESSER")
+newBinaryFunction([">"], library.greater, "GREATER")
+newBinaryFunction(["equals"], library.equals, "EQUALS")
 
 ##################
 # List functions #

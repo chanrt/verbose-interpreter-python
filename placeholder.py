@@ -1,3 +1,4 @@
+import library
 placeholder_definitions = []
 
 class PlaceholderDefiner:
@@ -12,3 +13,6 @@ def addPlaceholder(identifiers, replacement):
 addPlaceholder(["of"], "")
 addPlaceholder(["squared", "square"], "^ 2")
 addPlaceholder(["cubed", "cube"], "^3 ")
+addPlaceholder(["is lesser than"], "<")
+addPlaceholder(["is greater than"], ">")
+addPlaceholder(["==", "is equal to"], "equals")

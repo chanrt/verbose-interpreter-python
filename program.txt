@@ -24,3 +24,8 @@ print "Speed of light: " + 1 / sqrt($mu_0 * $epsilon_0)
 # Calculates and prints mean
 numbers are [1 2 3 4 5]
 print "Mean: " + (mean of numbers)
+
+# Prints numbers from 1 to 10
+num = 1
+print "Here comes numbers from 1 to 10:"
+while `num is lesser than 11` { print num ; num = num + 1 }

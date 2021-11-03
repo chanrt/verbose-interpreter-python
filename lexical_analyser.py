@@ -46,8 +46,6 @@ class Analyser:
                 self.insertSyntax()
             elif character == "[":
                 self.insertList()
-            elif character == "`":
-                self.insertCondition()
             elif character == "{":
                 self.insertBlock()
             
@@ -109,6 +107,9 @@ class Analyser:
             name_token = Token("NAME", name_string)
             self.line_stack.append(name_token)
 
+            if name_token.value == "while":
+                self.insertCondition()
+
     def insertOperator(self):
         character = self.input_string[self.position]
 
@@ -144,7 +145,7 @@ class Analyser:
 
     def insertCondition(self):
         start_position = self.position
-        stop_position = self.getClosingTick(self.position + 1)    
+        stop_position = self.getOpeningBrace(start_position)   
 
         child_analyser = Analyser(self.input_string[start_position + 1: stop_position], False, False)
         condition_items = child_analyser.line_stack
@@ -198,10 +199,10 @@ class Analyser:
             current_position += 1
         return -1
 
-    def getClosingTick(self, position):
+    def getOpeningBrace(self, position):
         current_position = position
         while current_position < len(self.input_string):
-            if self.input_string[current_position] == "`":
+            if self.input_string[current_position] == "{":
                 return current_position
             current_position += 1
         return -1

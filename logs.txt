@@ -1,4 +1,4 @@
-Logs of running program.txt at 03/11/2021 15:56:46
+Logs of running program.txt at 03/11/2021 16:09:22
 
 LEXICAL STACK: PRINT STRING:Hello, World! 
 

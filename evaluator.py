@@ -12,58 +12,74 @@ class Evaluator:
         self.evaluate()
 
     def processUnaryOperations(self):
-
         for operation in function_definitions:
             for position, item in enumerate(self.stack):
-                if item.type == operation.type:
-                    if operation.type in unary_operations:
+                if item.type == operation.type and operation.type in unary_operations:
+                    # Handle unary operations on negated numbers
+                    if self.stack[position + 1].type == "SUBTRACT":
+                        negated_number_token = Token("NUMBER", -self.stack[position + 2].value)
+                        self.stack[position + 1] = negated_number_token
+                        self.stack.pop(position + 2)
 
-                        # Manage unary operations on negated numbers
-                        if self.stack[position + 1].type == "SUBTRACT":
-                            negated_number_token = Token("NUMBER", -self.stack[position + 2].value)
-                            self.stack[position + 1] = negated_number_token
-                            self.stack.pop(position + 2)
+                    right_number = self.stack[position + 1].value
+                    result = operation.function(right_number)
 
-                        right_number = self.stack[position + 1].value
-                        result = operation.function(right_number)
+                    new_token = Token("NUMBER", result)
+                    self.stack[position] = new_token
+                    self.stack.pop(position + 1)
 
-                        new_token = Token("NUMBER", result)
-                        self.stack[position] = new_token
-                        self.stack.pop(position + 1)
+                    if self.debug:
+                        print(self)
 
-                        if self.debug:
-                            print(self)
-
-                        if self.log:
-                            logs = open("logs.txt", "a")
-                            logs.write(self.__str__() + "\n")
-                            logs.close
+                    if self.log:
+                        logs = open("logs.txt", "a")
+                        logs.write(self.__str__() + "\n")
+                        logs.close
 
     def processBinaryOperations(self):
-
         for operation in function_definitions:
             for position, item in enumerate(self.stack):
-                if item.type == operation.type:
-                    if operation.type in binary_operations:
-                        left_number = self.stack[position - 1].value
-                        right_number = self.stack[position + 1].value
-                        result = operation.function(left_number, right_number)
+                if item.type == operation.type and operation.type in binary_operations:
+                    left_number = self.stack[position - 1].value
+                    right_number = self.stack[position + 1].value
+                    result = operation.function(left_number, right_number)
 
-                        new_token = Token("NUMBER", result)
-                        self.stack[position] = new_token
-                        self.stack.pop(position + 1)
-                        self.stack.pop(position - 1)
+                    new_token = Token("NUMBER", result)
+                    self.stack[position] = new_token
+                    self.stack.pop(position + 1)
+                    self.stack.pop(position - 1)
                 
-                        if self.debug:
-                            print(self)
+                    if self.debug:
+                        print(self)
 
-                        if self.log:
-                            logs = open("logs.txt", "a")
-                            logs.write(self.__str__() + "\n")
-                            logs.close
+                    if self.log:
+                        logs = open("logs.txt", "a")
+                        logs.write(self.__str__() + "\n")
+                        logs.close
+
+    def processListOperations(self):
+        for operation in function_definitions:
+            for position, item in enumerate(self.stack):
+                if item.type == operation.type and operation.type in list_operations:
+                    right_list = self.stack[position + 1]
+                    list = []
+                    for item in right_list.items:
+                        list.append(item.value)
+                    result = operation.function(list)
+
+                    new_token = Token("NUMBER", result)
+                    self.stack[position] = new_token
+                    self.stack.pop(position + 1)
+
+                    if self.debug:
+                        print(self)
+
+                    if self.log:
+                        logs = open("logs.txt", "a")
+                        logs.write(self.__str__() + "\n")
+                        logs.close
 
     def makeAssignments(self):
-
         for position, item in enumerate(self.stack):
             if item.type == "ASSIGN":
                 left_variable = self.stack[position - 1].value
@@ -87,14 +103,13 @@ class Evaluator:
                     logs.close
 
     def processParentheses(self):
-
         for position, item in enumerate(self.stack):
             if item.type == "SYNTAX" and item.value == "LPAREN":
                 start_position = position
                 end_position = self.getClosingParen(position)
                 child_evaluator = Evaluator(self.stack[start_position + 1: end_position], self.depth + 1, self.echo, self.debug, self.log)
-                result = child_evaluator.getRemainingEntity()
-                self.stack[start_position] = Token("NUMBER", result)
+                result_token = child_evaluator.getRemainingEntity()
+                self.stack[start_position] = Token(result_token.type, result_token.value, result_token.items)
                 
                 num_delete = end_position - start_position
                 while num_delete > 0:
@@ -110,7 +125,6 @@ class Evaluator:
                     logs.close
 
     def printStatements(self):
-
         for position, item in enumerate(self.stack):
             if item.type == "PRINT":
                 right_entity = self.stack[position + 1].value
@@ -137,9 +151,30 @@ class Evaluator:
                                 break
             position += 1
 
+    def manageArrayIndices(self):
+        position = 0
+        while position + 1 < len(self.stack):
+            if self.stack[position].type == "LIST" and self.stack[position + 1].type == "LIST":
+                array_token = self.stack[position]
+                subscript_token = self.stack[position + 1]
+                index = -1
+                
+                if len(subscript_token.items) == 1 and subscript_token.items[0].type == "NUMBER":
+                    index = subscript_token.items[0].value
+
+                if index <= len(array_token.items):
+                    element_token = array_token.items[index - 1]
+                    self.stack[position] = element_token
+                    self.stack.pop(position + 1)
+                else:
+                    # Out of array bounds
+                    pass
+            position += 1
+
     # key function
     def evaluate(self):
         self.replaceKnownVars()
+        self.manageArrayIndices()
 
         if self.debug:
             print(self)
@@ -147,33 +182,11 @@ class Evaluator:
         self.processParentheses()
         self.processUnaryOperations()
         self.processBinaryOperations()
-        
-        for operation in function_definitions:
-            for position, item in enumerate(self.stack):
-                if item.type == operation.type:
-                    if operation.type in list_operations:
-                        right_list = self.stack[position + 1]
-                        list = []
-                        for item in right_list.items:
-                            list.append(item.value)
-                        result = operation.function(list)
-
-                        new_token = Token("NUMBER", result)
-                        self.stack[position] = new_token
-                        self.stack.pop(position + 1)
-
-                        if self.debug:
-                            print(self)
-
-                        if self.log:
-                            logs = open("logs.txt", "a")
-                            logs.write(self.__str__() + "\n")
-                            logs.close
-
+        self.processListOperations()
         self.makeAssignments()
         self.printStatements()
         
-        if self.echo and self.somethingRemains():
+        if self.echo and self.somethingRemains() and self.depth == 0:
             self.printRemaining()
 
     # Helper functions from here on
@@ -216,7 +229,7 @@ class Evaluator:
 
         for item in self.stack:
             if item.type == "NUMBER" or item.type == "STRING":
-                remaining_entities.append(item.value)
+                remaining_entities.append(item)
 
         if len(remaining_entities) == 1:
             return remaining_entities[0]

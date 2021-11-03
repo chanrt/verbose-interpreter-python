@@ -1,4 +1,4 @@
-Logs of running program.txt at 03/11/2021 00:23:34
+Logs of running program.txt at 03/11/2021 00:30:16
 
 LEXICAL STACK: PRINT STRING:Hello, World! 
 
@@ -53,3 +53,4 @@ LEXICAL STACK: PRINT STRING:Mean:  ADD SYNTAX:LPAREN MEAN NAME:numbers SYNTAX:RP
 EVALUATOR STACK (depth 1): NUMBER:3.0 
 EVALUATOR STACK (depth 0): PRINT STRING:Mean:  ADD NUMBER:3.0 
 EVALUATOR STACK (depth 0): PRINT NUMBER:Mean: 3.0 
+

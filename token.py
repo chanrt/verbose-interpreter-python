@@ -28,3 +28,7 @@ class Token:
             return "NUMBER"
         elif isinstance(value, str):
             return "STRING"
+
+def autoMake(value):
+    type = Token.getTypeFromValue(value)
+    return Token(type, value)

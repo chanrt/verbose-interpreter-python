@@ -9,7 +9,7 @@ class Variables:
             output_string += variable.getString() + ", "
         print(output_string)
 
-    def add(self, name, value, items):
+    def add(self, name, value, items = None):
         self.removeAny(name)
         new_variable = Variable(name, value, items)
         self.stack.append(new_variable)
@@ -18,6 +18,11 @@ class Variables:
         for index, variable in enumerate(self.stack):
             if variable.name == name:
                 self.stack.pop(index)
+
+    def getVarValue(self, name):
+        for variable in self.stack:
+            if variable.name == name:
+                return variable.value
 
     def getNumVars(self):
         return len(self.stack) - self.num_default_vars

@@ -1,8 +1,7 @@
 # A verbose program intended to showcase it's current features
 # Type "python verbose.py program.txt" to run this program
 
-# Prints "Hello, World!"
-say "Hello, World!"
+say "Hello, World!" # Prints "Hello, World!"
 
 # Prints firstName and lastName together
 firstName is "Jane"
@@ -30,5 +29,5 @@ num = 1
 print "Here comes numbers from 1 to 10:"
 while num is lesser than 11 {
     print num
-    num = num + 1
+    increment num
 }

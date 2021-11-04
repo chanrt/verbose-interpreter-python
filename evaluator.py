@@ -1,7 +1,7 @@
-from token import Token
+import helpers
+from token import Token, autoMake
 from variables import vars
-from function_definitions import function_definitions, unary_operations, binary_operations, boolean_operations, list_operations
-import library
+from function_definitions import *
 
 class Evaluator:
     def __init__(self, stack, depth = 0, echo = False, debug = False, log = False):
@@ -29,7 +29,7 @@ class Evaluator:
                     right_number = self.stack[position + 1].value
                     result = operation.function(right_number)
 
-                    new_token = Token("NUMBER", result)
+                    new_token = autoMake(result)
                     self.stack[position] = new_token
                     self.stack.pop(position + 1)
 
@@ -45,11 +45,11 @@ class Evaluator:
         for operation in function_definitions:
             for position, item in enumerate(self.stack):
                 if item.type == operation.type and operation.type in binary_operations:
-                    left_number = self.stack[position - 1].value
-                    right_number = self.stack[position + 1].value
-                    result = operation.function(left_number, right_number)
+                    left_entity = self.stack[position - 1].value
+                    right_entity = self.stack[position + 1].value
+                    result = operation.function(left_entity, right_entity)
 
-                    new_token = Token("NUMBER", result)
+                    new_token = autoMake(result)
                     self.stack[position] = new_token
                     self.stack.pop(position + 1)
                     self.stack.pop(position - 1)
@@ -66,11 +66,11 @@ class Evaluator:
         for operation in function_definitions:
             for position, item in enumerate(self.stack):
                 if item.type == operation.type and operation.type in boolean_operations:
-                    left_number = self.stack[position - 1].value
-                    right_number = self.stack[position + 1].value
-                    result = operation.function(left_number, right_number)
+                    left_entity = self.stack[position - 1].value
+                    right_entity = self.stack[position + 1].value
+                    result = operation.function(left_entity, right_entity)
 
-                    new_token = Token("NUMBER", result)
+                    new_token = autoMake(result)
                     self.stack[position] = new_token
                     self.stack.pop(position + 1)
                     self.stack.pop(position - 1)
@@ -93,9 +93,77 @@ class Evaluator:
                         list.append(item.value)
                     result = operation.function(list)
 
-                    new_token = Token("NUMBER", result)
+                    new_token = autoMake(result)
                     self.stack[position] = new_token
                     self.stack.pop(position + 1)
+
+                    if self.debug:
+                        print(self)
+
+                    if self.log:
+                        logs = open("logs.txt", "a")
+                        logs.write(self.__str__() + "\n")
+                        logs.close
+
+    def processCompoundOperations(self):
+        for operation in function_definitions:
+            for position, item in enumerate(self.stack):
+                if item.type == operation.type and operation.type in compound_functions:
+                    if operation.type == "INCREMENT":
+                        right_entity = self.stack[position + 1]
+                        right_entity_value = vars.getVarValue(right_entity.value)
+                        new_value = library.add(right_entity_value, 1)
+                        vars.add(right_entity.value, new_value)
+
+                        new_token = autoMake(new_value)
+                        self.stack[position] = new_token
+                        self.stack.pop(position + 1)
+
+                    elif operation.type == "DECREMENT":
+                        right_entity = self.stack[position + 1]
+                        right_entity_value = vars.getVarValue(right_entity.value)
+                        new_value = library.subtract(right_entity_value, 1)
+                        vars.add(right_entity.value, new_value)
+
+                        new_token = autoMake(new_value)
+                        self.stack[position] = new_token
+                        self.stack.pop(position + 1)
+
+                    elif operation.type == "INCREASE":
+                        target_entity = self.stack[position + 1]
+                        target_entity_value = vars.getVarValue(target_entity.value)
+                        info_entity = self.stack[position + 2]
+
+                        if info_entity.type == "NUMBER":
+                            info_entity_value = info_entity.value
+                        elif info_entity == "NAME":
+                            info_entity_value = vars.getVarValue(info_entity.value)
+
+                        new_value = library.add(target_entity_value, info_entity_value)
+                        vars.add(target_entity.value, new_value)
+
+                        new_token = autoMake(new_value)
+                        self.stack[position] = new_token
+                        self.stack.pop(position + 2)
+                        self.stack.pop(position + 1)
+
+                    elif operation.type == "DECREASE":
+                        target_entity = self.stack[position + 1]
+                        target_entity_value = vars.getVarValue(target_entity.value)
+                        info_entity = self.stack[position + 2]
+
+                        if info_entity.type == "NUMBER":
+                            info_entity_value = info_entity.value
+                        elif info_entity == "NAME":
+                            info_entity_value = vars.getVarValue(info_entity.value)
+
+                        new_value = library.subtract(target_entity_value, info_entity_value)
+                        vars.add(target_entity.value, new_value)
+
+                        new_token = autoMake(new_value)
+                        self.stack[position] = new_token
+                        self.stack.pop(position + 2)
+                        self.stack.pop(position + 1)
 
                     if self.debug:
                         print(self)
@@ -206,15 +274,27 @@ class Evaluator:
 
                 condition_evaluator = Evaluator(self.stack[1].items.copy(), self.depth + 1, False, False, False)
                 if condition_evaluator.getBoolResult() == True:
-                    block_statements = library.split_stack(self.stack[2].items.copy())
+                    block_statements = helpers.split_stack(self.stack[2].items.copy())
                     for statement in block_statements:
                         statement_evaluator = Evaluator(statement, self.depth + 1, False, False, False)
                     times += 1
                 else:
                     break
 
+    def runGrouper(self):
+        for position, index in enumerate(self.stack):
+            if self.stack[position].type == "ASSIGN":
+                if self.stack[position - 1].type == "LESSER":
+                    self.stack[position - 1].type = "LTE"
+                    self.stack.pop(position)
+                elif self.stack[position - 1].type == "GREATER":
+                    self.stack[position - 1].type = "GTE"
+                    self.stack.pop(position)
+
     # key function
     def evaluate(self):
+        self.runGrouper()
+        self.processCompoundOperations()
         self.replaceKnownVars()
         self.manageArrayIndices()
 
@@ -279,9 +359,6 @@ class Evaluator:
             return None
         elif len(remaining_entities) == 1:
             return remaining_entities[0]
-
-    def printResult(self):
-        print(f"RESULT: {self.getRemainingNumber()}")
 
     def getBoolResult(self):
         remaining_entity = self.getRemainingEntity()

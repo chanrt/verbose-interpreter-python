@@ -1,6 +1,6 @@
-Logs of running program.txt at 04/11/2021 22:17:58
+Logs of running program.txt at 04/11/2021 22:48:18
 
-LEXICAL STACK: PRINT STRING:Hello, World! 
+LEXICAL STACK: PRINT STRING:Hello, World! NAME:Prints STRING:Hello, World! 
 
 LEXICAL STACK: NAME:firstName ASSIGN STRING:Jane 
 VARIABLE STACK: firstName:Jane, 
@@ -58,5 +58,5 @@ LEXICAL STACK: NAME:num ASSIGN NUMBER:1
 VARIABLE STACK: firstName:Jane, lastName:Doe, a:3, b:4, angle:20, numbers with items: NUMBER:1, NUMBER:2, NUMBER:3, NUMBER:4, NUMBER:5, , num:1, 
 EVALUATOR STACK (depth 0): NUMBER:1 
 LEXICAL STACK: PRINT STRING:Here comes numbers from 1 to 10: 
-LEXICAL STACK: NAME:while CONDITION with items: NAME:num, LESSER, NUMBER:11,  BLOCK with items: PRINT, NAME:num, SYNTAX:PERIOD, NAME:num, ASSIGN, NAME:num, ADD, NUMBER:1, SYNTAX:PERIOD,  SYNTAX:PERIOD 
+LEXICAL STACK: NAME:while CONDITION with items: NAME:num, LESSER, NUMBER:11,  BLOCK with items: PRINT, NAME:num, SYNTAX:PERIOD, INCREMENT, NAME:num, SYNTAX:PERIOD,  SYNTAX:PERIOD 
 

@@ -1,5 +1,5 @@
 import sys, datetime
-import library
+import helpers
 from lexical_analyser import Analyser
 from evaluator import Evaluator
 
@@ -20,7 +20,7 @@ if __name__ == "__main__":
         line = lines[current_line]
         current_line += 1
 
-        while library.isExpectingMore(line):
+        while helpers.isExpectingMore(line):
             line += lines[current_line] + ";"
             current_line += 1
 

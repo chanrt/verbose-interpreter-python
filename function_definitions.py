@@ -6,6 +6,7 @@ unary_operations = []
 binary_operations = []
 boolean_operations = []
 list_operations = []
+compound_functions = []
 
 class FunctionDefiner:
     def __init__(self, identifiers, function, token_type, token_value):
@@ -36,6 +37,11 @@ def newListFunction(identifiers, function, token_type, token_value = None):
 
 def newSpecialFunction(identifiers, function, token_type, token_value = None):
     new_function = FunctionDefiner(identifiers, function, token_type, token_value)
+    function_definitions.append(new_function)
+
+def newCompoundFunction(identifiers, function, token_type, token_value = None):
+    new_function = FunctionDefiner(identifiers, function, token_type, token_value)
+    compound_functions.append(token_type)
     function_definitions.append(new_function)
 
 ####################
@@ -104,6 +110,8 @@ newBinaryFunction(["C", "choose"], library.comb, "COMB")
 # Boolean operations #
 ######################
 
+newBinaryFunction(["<="], library.lte, "LTE")
+newBinaryFunction([">="], library.lte, "GTE")
 newBinaryFunction(["<"], library.lesser, "LESSER")
 newBinaryFunction([">"], library.greater, "GREATER")
 newBinaryFunction(["equals"], library.equals, "EQUALS")
@@ -124,3 +132,12 @@ newListFunction(["gcd", "hcf"], library.gcd, "GCD")
 
 newSpecialFunction(["print", "say", "display"], None, "PRINT")
 newSpecialFunction(["=", "isEqualTo", "is", "are"], None, "ASSIGN")
+
+######################
+# Compound functions #
+######################
+
+newCompoundFunction(["increment"], None, "INCREMENT")
+newCompoundFunction(["decrement"], None, "DECREMENT")
+newCompoundFunction(["increase"], None, "INCREASE")
+newCompoundFunction(["decrease"], None, "DECREASE")

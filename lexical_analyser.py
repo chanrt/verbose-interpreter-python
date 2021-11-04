@@ -48,6 +48,8 @@ class Analyser:
                 self.insertList()
             elif character == "{":
                 self.insertBlock()
+            elif character == "#":
+                self.input_string == ""
             
             self.position += 1
         

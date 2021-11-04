@@ -1,12 +1,12 @@
 from commands import CommandManager
-import library
+import helpers
 from token import Token
 from lexical_analyser import Analyser
 from evaluator import Evaluator
 
 if __name__ == "__main__":
 
-    debug_status = True
+    debug_status = False
     
     print("--> Verbose Interpreter <--\n")
     print("Repository at https://github.com/chanrt/verbose-interpreter-python")
@@ -18,14 +18,14 @@ if __name__ == "__main__":
         if CommandManager.check(input_string):
             CommandManager.execute(input_string)
         else:
-            while library.isExpectingMore(input_string):
+            while helpers.isExpectingMore(input_string):
                 more_input = input("... ")
                 input_string += more_input + ";"
 
             analyser = Analyser(input_string, debug = debug_status)
             line_stack = analyser.line_stack
 
-            statements = library.split_stack(line_stack)
+            statements = helpers.split_stack(line_stack)
 
             for statement in statements:
                 evaluator = Evaluator(statement, echo = True, debug = debug_status)

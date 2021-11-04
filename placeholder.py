@@ -10,10 +10,28 @@ def addPlaceholder(identifiers, replacement):
     new_placeholder = PlaceholderDefiner(identifiers, replacement)
     placeholder_definitions.append(new_placeholder)
 
-addPlaceholder(["of"], "")
+# Null placeholders
+addPlaceholder(["of", "by"], "")
+
+# Namesake placeholders
+addPlaceholder(["until"], "while")
+
+# Arithmetic placeholders
 addPlaceholder(["squared", "square"], "^ 2")
 addPlaceholder(["cubed", "cube"], "^3 ")
+
+# Testing placeholders
+addPlaceholder(["is odd"], "% 2 == 1")
+addPlaceholder(["is even"], "% 2 == 0")
+addPlaceholder(["is positive"], "> 0")
+addPlaceholder(["is negative"], "< 0")
+addPlaceholder(["is non negative"], ">= 0")
+addPlaceholder(["is non positive"], "<= 0")
+
+# Boolean placeholders
 addPlaceholder(["is lesser than", "lesser than"], "<")
-addPlaceholder(["is lesser than or equal to"], "<=")
 addPlaceholder(["is greater than", "greater than"], ">")
+addPlaceholder(["is lesser than or equal to", "lesser than or equal to"], "<=")
+addPlaceholder(["is greater than or equal to", "greater than or equal to"], ">=")
 addPlaceholder(["==", "is equal to"], "equals")
+

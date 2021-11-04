@@ -1,5 +1,6 @@
 from commands import CommandManager
 import library
+from token import Token
 from lexical_analyser import Analyser
 from evaluator import Evaluator
 
@@ -17,6 +18,10 @@ if __name__ == "__main__":
         if CommandManager.check(input_string):
             CommandManager.execute(input_string)
         else:
+            while library.isExpectingMore(input_string):
+                more_input = input("... ")
+                input_string += more_input + ";"
+
             analyser = Analyser(input_string, debug = debug_status)
             line_stack = analyser.line_stack
 

@@ -1,4 +1,5 @@
 import sys, datetime
+import library
 from lexical_analyser import Analyser
 from evaluator import Evaluator
 
@@ -13,7 +14,16 @@ if __name__ == "__main__":
     logs.write(f"Logs of running {filename} at {now.strftime('%d/%m/%Y %H:%M:%S')}\n")
     logs.close()
 
-    for line in lines:
+    current_line = 0
+
+    while current_line < len(lines):
+        line = lines[current_line]
+        current_line += 1
+
+        while library.isExpectingMore(line):
+            line += lines[current_line] + ";"
+            current_line += 1
+
         analyser = Analyser(line, debug = False, log = True)
         evaluator = Evaluator(analyser.line_stack, echo = False, debug = False, log = True)
 

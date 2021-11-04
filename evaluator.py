@@ -10,6 +10,10 @@ class Evaluator:
         self.echo = echo
         self.debug = debug
         self.log = log
+
+        self.loop_control = False
+        self.loop_limit = 10
+
         self.evaluate()
 
     def processUnaryOperations(self):
@@ -194,15 +198,19 @@ class Evaluator:
             position += 1
 
     def handleLoops(self):
+        times = 0
         if len(self.stack) > 1 and self.stack[0].value == "while" and self.stack[1].type == "CONDITION" and self.stack[2].type == "BLOCK":
             while True:
+                if self.loop_control and times >= self.loop_limit:
+                    break
+
                 condition_evaluator = Evaluator(self.stack[1].items.copy(), self.depth + 1, False, False, False)
                 if condition_evaluator.getBoolResult() == True:
                     block_statements = library.split_stack(self.stack[2].items.copy())
                     for statement in block_statements:
                         statement_evaluator = Evaluator(statement, self.depth + 1, False, False, False)
+                    times += 1
                 else:
-                    # while loop condition is false
                     break
 
     # key function

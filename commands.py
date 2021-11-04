@@ -1,4 +1,3 @@
-import os, sys
 from variables import vars
 
 def about():

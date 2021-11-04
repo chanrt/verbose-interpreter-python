@@ -109,7 +109,7 @@ class Analyser:
             name_token = Token("NAME", name_string)
             self.line_stack.append(name_token)
 
-            if name_token.value == "while":
+            if name_token.value == "while" or name_token.value == "if" or name_token.value == "else_if" or name_token.value == "else":
                 self.insertCondition()
 
     def insertOperator(self):
@@ -201,19 +201,6 @@ class Analyser:
             current_position += 1
         return -1
 
-    def getBlockOpen(self, position):
-        current_position = position
-        while current_position < len(self.input_string):
-            if self.input_string[current_position] == ":":
-                return current_position
-            current_position += 1
-        return -1
-
-    def getBlockClose(self):
-        closing_position = self.input_string.find("end")
-        self.position = closing_position + 2
-        return closing_position
-
     def getOpeningBrace(self, position):
         current_position = position
         while current_position < len(self.input_string):
@@ -242,6 +229,7 @@ class Analyser:
                 output_string += token.getString() + " "
             return output_string 
         else:
+            # without this, we get empty LEXICAL STACK for blank lines
             return ""
 
 

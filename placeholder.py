@@ -15,6 +15,7 @@ addPlaceholder(["of", "by"], "")
 
 # Namesake placeholders
 addPlaceholder(["until"], "while")
+addPlaceholder(["else if"], "else_if")
 
 # Arithmetic placeholders
 addPlaceholder(["squared", "square"], "^ 2")

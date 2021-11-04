@@ -265,9 +265,39 @@ class Evaluator:
                     pass
             position += 1
 
+    def handleConditionals(self):
+        block_level = 0
+        if self.ifBlockExists():
+            condition_evaluator = Evaluator(self.stack[1].items.copy(), self.depth + 1, False, False, False)
+            if condition_evaluator.getBoolResult() == True:
+                block_statements = helpers.split_stack(self.stack[2].items.copy())
+                for statement in block_statements:
+                    statement_evaluator = Evaluator(statement, self.depth + 1, False, False, False)
+                # block ends here
+            else:
+                while True:
+                    block_level += 1
+                    if self.elifBlockExists(block_level):
+                        condition_evaluator = Evaluator(self.stack[3 * block_level + 1].items.copy(), self.depth + 1, False, False, False)
+                        if condition_evaluator.getBoolResult() == True:
+                            block_statements = helpers.split_stack(self.stack[3 * block_level + 2].items.copy())
+                            for statement in block_statements:
+                                statement_evaluator = Evaluator(statement, self.depth + 1, False, False, False)
+                            # some condition has been satisfied, so quit
+                            break
+                    elif self.elseBlockExists(block_level):
+                        block_statements = helpers.split_stack(self.stack[3 * block_level + 1].items.copy())
+                        for statement in block_statements:
+                            statement_evaluator = Evaluator(statement, self.depth + 1, False, False, False)
+                        # last conditional block has been executed, so quit
+                        break
+                    else:
+                        # no more conditonals blocks
+                        break
+
     def handleLoops(self):
         times = 0
-        if len(self.stack) > 1 and self.stack[0].value == "while" and self.stack[1].type == "CONDITION" and self.stack[2].type == "BLOCK":
+        if len(self.stack) > 2 and self.stack[0].value == "while" and self.stack[1].type == "CONDITION" and self.stack[2].type == "BLOCK":
             while True:
                 if self.loop_control and times >= self.loop_limit:
                     break
@@ -290,6 +320,9 @@ class Evaluator:
                 elif self.stack[position - 1].type == "GREATER":
                     self.stack[position - 1].type = "GTE"
                     self.stack.pop(position)
+            elif self.stack[position].type == "CONDITION":
+                if self.stack[position - 1].type == "NAME" and self.stack[position - 1].value == "else":
+                    self.stack.pop(position)
 
     # key function
     def evaluate(self):
@@ -302,6 +335,7 @@ class Evaluator:
             print(self)
 
         self.processParentheses()
+        self.handleConditionals()
         self.handleLoops()
         self.processUnaryOperations()
         self.processBinaryOperations()
@@ -370,6 +404,15 @@ class Evaluator:
                 return False
             else:
                 return True
+
+    def ifBlockExists(self):
+        return len(self.stack) > 2 and self.stack[0].value == "if" and self.stack[1].type == "CONDITION" and self.stack[2].type == "BLOCK"
+
+    def elifBlockExists(self, block_level):
+        return len(self.stack) > 3 * block_level + 2 and self.stack[3 * block_level].value == "else_if" and self.stack[3 * block_level + 1].type == "CONDITION" and self.stack[3 * block_level + 2].type == "BLOCK"
+
+    def elseBlockExists(self, block_level):
+        return len(self.stack) > 3 * block_level + 1 and self.stack[3 * block_level].value == "else" and self.stack[3 * block_level + 1].type == "BLOCK"
 
     def __str__(self):
         output_string = f"EVALUATOR STACK (depth {self.depth}): "

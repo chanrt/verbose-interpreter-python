@@ -6,7 +6,7 @@ say "Hello, World!" # Prints "Hello, World!"
 # Prints firstName and lastName together
 firstName is "Jane"
 lastName is "Doe"
-print "Full name: " + firstName and lastName
+print "Full name: " + (firstName and lastName)
 
 # Finds hypotenuse of a triangle
 a = 3
@@ -24,10 +24,20 @@ print "Speed of light: " + 1 / sqrt($mu_0 * $epsilon_0)
 numbers are [1 2 3 4 5]
 print "Mean: " + (mean of numbers)
 
-# Prints numbers from 1 to 10
-num = 1
-print "Here comes numbers from 1 to 10:"
-while num is lesser than 11 {
+# Prints even numbers from 20 to 1
+num = 20
+print "Here are even numbers from 20 to 1"
+while num is positive {
     print num
-    increment num
+    decrease num by 2
+}
+
+a = 0
+while a < 100 {
+    if a is even {
+        print "Even"
+    } else {
+        print "Odd"
+    }
+    increase a by 2
 }

@@ -14,6 +14,11 @@ class Variables:
         new_variable = Variable(name, value, items)
         self.stack.append(new_variable)
 
+    def appendItemToList(self, list_name, item):
+        for variable in self.stack:
+            if variable.name == list_name:
+                variable.items.append(item)
+
     def removeAny(self, name):
         for index, variable in enumerate(self.stack):
             if variable.name == name:
@@ -23,6 +28,24 @@ class Variables:
         for variable in self.stack:
             if variable.name == name:
                 return variable.value
+        return None
+
+    def getVarItems(self, name):
+        for variable in self.stack:
+            if variable.name == name:
+                return variable.items
+        return None
+
+    def getType(self, name):
+        for variable in self.stack:
+            if variable.name == name:
+                if variable.value is not None:
+                    if isinstance(variable.value, int) or isinstance(variable.value, float):
+                        return "NUMBER"
+                    elif isinstance(variable.value, str):
+                        return "STRING"
+                elif variable.items is not None:
+                    return "LIST"
 
     def getNumVars(self):
         return len(self.stack) - self.num_default_vars

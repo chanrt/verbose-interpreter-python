@@ -90,6 +90,10 @@ newUnaryFunction(["sign", "signum"], library.sign, "SIGN")
 newUnaryFunction(["abs", "magn"], library.abs, "ABS")
 newUnaryFunction(["frac", "fractional"], library.frac, "FRAC")
 
+# Internet functions
+newUnaryFunction(["google"], library.google, "GOOGLE")
+newUnaryFunction(["youtube"], library.youtube, "YOUTUBE")
+
 #####################
 # Binary operations #
 #####################
@@ -141,3 +145,7 @@ newCompoundFunction(["increment"], None, "INCREMENT")
 newCompoundFunction(["decrement"], None, "DECREMENT")
 newCompoundFunction(["increase"], None, "INCREASE")
 newCompoundFunction(["decrease"], None, "DECREASE")
+
+newCompoundFunction(["append"], None, "APPEND")
+newCompoundFunction(["prepend"], None, "PREPEND")
+newCompoundFunction(["insert"], None, "INSERT")

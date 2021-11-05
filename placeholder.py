@@ -11,7 +11,7 @@ def addPlaceholder(identifiers, replacement):
     placeholder_definitions.append(new_placeholder)
 
 # Null placeholders
-addPlaceholder(["of", "by"], "")
+addPlaceholder(["of ", "by ", "to ", "at ", "in "], "")
 
 # Namesake placeholders
 addPlaceholder(["until"], "while")

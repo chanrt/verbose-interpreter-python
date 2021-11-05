@@ -28,7 +28,12 @@ class Token:
             return "NUMBER"
         elif isinstance(value, str):
             return "STRING"
+        elif isinstance(value, list):
+            return "LIST"
 
 def autoMake(value):
     type = Token.getTypeFromValue(value)
-    return Token(type, value)
+    if type == "NUMBER" or type == "STRING":
+        return Token(type, value, None)
+    elif type == "LIST":
+        return Token(type, None, value)

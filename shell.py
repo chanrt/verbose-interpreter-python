@@ -6,7 +6,7 @@ from evaluator import Evaluator
 
 if __name__ == "__main__":
 
-    debug_status = False
+    debug_status = True
     
     print("--> Verbose Interpreter <--\n")
     print("Repository at https://github.com/chanrt/verbose-interpreter-python")

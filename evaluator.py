@@ -26,12 +26,12 @@ class Evaluator:
                         self.stack[position + 1] = negated_number_token
                         self.stack.pop(position + 2)
 
-                    right_number = self.stack[position + 1].value
-                    result = operation.function(right_number)
+                    right_entity_value = self.getValue(position + 1)
+                    result = operation.function(right_entity_value)
 
                     new_token = autoMake(result)
                     self.stack[position] = new_token
-                    self.stack.pop(position + 1)
+                    self.clearGarbage(position + 1)
 
                     if self.debug:
                         print(self)
@@ -45,14 +45,12 @@ class Evaluator:
         for operation in function_definitions:
             for position, item in enumerate(self.stack):
                 if item.type == operation.type and operation.type in binary_operations:
-                    left_entity = self.stack[position - 1].value
-                    right_entity = self.stack[position + 1].value
-                    result = operation.function(left_entity, right_entity)
+                    left_entity_value, right_entity_value = self.getValue(position - 1), self.getValue(position + 1)
+                    result = operation.function(left_entity_value, right_entity_value)
 
                     new_token = autoMake(result)
                     self.stack[position] = new_token
-                    self.stack.pop(position + 1)
-                    self.stack.pop(position - 1)
+                    self.clearGarbage(position - 1, position + 1)
                 
                     if self.debug:
                         print(self)
@@ -66,14 +64,12 @@ class Evaluator:
         for operation in function_definitions:
             for position, item in enumerate(self.stack):
                 if item.type == operation.type and operation.type in boolean_operations:
-                    left_entity = self.stack[position - 1].value
-                    right_entity = self.stack[position + 1].value
-                    result = operation.function(left_entity, right_entity)
+                    left_entity_value, right_entity_value = self.getValue(position - 1), self.getValue(position + 1)
+                    result = operation.function(left_entity_value, right_entity_value)
 
                     new_token = autoMake(result)
                     self.stack[position] = new_token
-                    self.stack.pop(position + 1)
-                    self.stack.pop(position - 1)
+                    self.clearGarbage(position - 1, position + 1)
                 
                     if self.debug:
                         print(self)
@@ -87,15 +83,15 @@ class Evaluator:
         for operation in function_definitions:
             for position, item in enumerate(self.stack):
                 if item.type == operation.type and operation.type in list_operations:
-                    right_list = self.stack[position + 1]
+                    right_entity_items = self.getValue(position + 1)
                     list = []
-                    for item in right_list.items:
+                    for item in right_entity_items:
                         list.append(item.value)
                     result = operation.function(list)
 
                     new_token = autoMake(result)
                     self.stack[position] = new_token
-                    self.stack.pop(position + 1)
+                    self.clearGarbage(position + 1)
 
                     if self.debug:
                         print(self)
@@ -117,7 +113,7 @@ class Evaluator:
 
                         new_token = autoMake(new_value)
                         self.stack[position] = new_token
-                        self.stack.pop(position + 1)
+                        self.clearGarbage(position + 1)
 
                     elif operation.type == "DECREMENT":
                         right_entity = self.stack[position + 1]
@@ -127,43 +123,72 @@ class Evaluator:
 
                         new_token = autoMake(new_value)
                         self.stack[position] = new_token
-                        self.stack.pop(position + 1)
+                        self.clearGarbage(position + 1)
 
                     elif operation.type == "INCREASE":
                         target_entity = self.stack[position + 1]
                         target_entity_value = vars.getVarValue(target_entity.value)
-                        info_entity = self.stack[position + 2]
-
-                        if info_entity.type == "NUMBER":
-                            info_entity_value = info_entity.value
-                        elif info_entity == "NAME":
-                            info_entity_value = vars.getVarValue(info_entity.value)
+                        info_entity_value = self.getValue(position + 2)
 
                         new_value = library.add(target_entity_value, info_entity_value)
                         vars.add(target_entity.value, new_value)
 
                         new_token = autoMake(new_value)
                         self.stack[position] = new_token
-                        self.stack.pop(position + 2)
-                        self.stack.pop(position + 1)
+                        self.clearGarbage(position + 1, position + 2)
 
                     elif operation.type == "DECREASE":
                         target_entity = self.stack[position + 1]
                         target_entity_value = vars.getVarValue(target_entity.value)
-                        info_entity = self.stack[position + 2]
-
-                        if info_entity.type == "NUMBER":
-                            info_entity_value = info_entity.value
-                        elif info_entity == "NAME":
-                            info_entity_value = vars.getVarValue(info_entity.value)
+                        info_entity_value - self.getValue(position + 2)
 
                         new_value = library.subtract(target_entity_value, info_entity_value)
                         vars.add(target_entity.value, new_value)
 
                         new_token = autoMake(new_value)
                         self.stack[position] = new_token
-                        self.stack.pop(position + 2)
-                        self.stack.pop(position + 1)
+                        self.clearGarbage(position + 1, position + 2)
+
+                    elif operation.type == "APPEND":
+                        target_entity = self.stack[position + 2]
+                        target_entity_items = vars.getVarItems(target_entity.value)
+
+                        source_entity = self.stack[position + 1]
+                        new_item_token = autoMake(source_entity.value)
+                        target_entity_items.append(new_item_token)
+                        vars.add(target_entity.value, None, target_entity_items)
+
+                        new_token = autoMake(target_entity_items)
+                        self.stack[position] = new_token
+                        self.clearGarbage(position + 1, position + 2)
+
+                    elif operation.type == "PREPEND":
+                        target_entity = self.stack[position + 2]
+                        target_entity_items = vars.getVarItems(target_entity.value)
+
+                        source_entity = self.stack[position + 1]
+                        new_item_token = autoMake(source_entity.value)
+                        target_entity_items.insert(0, new_item_token)
+                        vars.add(target_entity.value, None, target_entity_items)
+
+                        new_token = autoMake(target_entity_items)
+                        self.stack[position] = new_token
+                        self.clearGarbage(position + 1, position + 2)
+
+                    elif operation.type == "INSERT":
+                        target_entity = self.stack[position + 3], 
+                        target_entity_items = vars.getVarItems(target_entity.value)
+
+                        source_entity_value = self.getValue(position + 1)
+                        new_item_token = autoMake(source_entity_value)
+                        position_entity_value = self.getValue(position + 2)
+
+                        target_entity_items.insert(position_entity_value - 1, new_item_token)
+                        vars.add(target_entity.value, None, target_entity_items)
+
+                        new_token = autoMake(target_entity_items)
+                        self.stack[position] = new_token
+                        self.clearGarbage(position + 1, position + 2, position + 3)
 
                     if self.debug:
                         print(self)
@@ -173,20 +198,22 @@ class Evaluator:
                         logs.write(self.__str__() + "\n")
                         logs.close
 
+
     def makeAssignments(self):
         for position, item in enumerate(self.stack):
             if item.type == "ASSIGN":
                 left_variable = self.stack[position - 1].value
-                right_entity = self.stack[position + 1]
-                vars.add(left_variable, right_entity.value, right_entity.items)
+                right_entity_value = self.getValue(position + 1)
 
-                if self.log:
-                    vars.writeToLogs()
+                if isinstance(right_entity_value, int) or isinstance(right_entity_value, float) or isinstance(right_entity_value, str):
+                    vars.add(left_variable, right_entity_value, None)
+                    new_token = autoMake(right_entity_value)
+                elif isinstance(right_entity_value, list):
+                    vars.add(left_variable, None, right_entity_value)
+                    new_token = autoMake(right_entity_value)
 
-                new_token = Token(right_entity.type, right_entity.value, right_entity.items)
                 self.stack[position] = new_token
-                self.stack.pop(position + 1)
-                self.stack.pop(position - 1)
+                self.clearGarbage(position - 1, position + 1)
 
                 if self.debug:
                     print(self)
@@ -195,6 +222,7 @@ class Evaluator:
                     logs = open("logs.txt", "a")
                     logs.write(self.__str__() + "\n")
                     logs.close
+                    vars.writeToLogs()
 
     def processParentheses(self):
         for position, item in enumerate(self.stack):
@@ -207,7 +235,7 @@ class Evaluator:
                 
                 num_delete = end_position - start_position
                 while num_delete > 0:
-                    self.stack.pop(start_position + 1)
+                    self.clearGarbage(position + 1)
                     num_delete -= 1
 
                 if self.debug:
@@ -223,8 +251,7 @@ class Evaluator:
             if item.type == "PRINT":
                 right_entity = self.stack[position + 1].value
                 print(right_entity)
-                self.stack.pop(position + 1)
-                self.stack.pop(position)
+                self.clearGarbage(position, position + 1)
 
     def replaceKnownVars(self):
         position = 0
@@ -248,18 +275,18 @@ class Evaluator:
     def manageArrayIndices(self):
         position = 0
         while position + 1 < len(self.stack):
-            if self.stack[position].type == "LIST" and self.stack[position + 1].type == "LIST":
-                array_token = self.stack[position]
-                subscript_token = self.stack[position + 1]
+            if isinstance(self.getValue(position), list) and self.stack[position + 1].type == "LIST":
+                source_list = self.getValue(position)
+                subscript_value = self.getValue(position + 1)
                 index = -1
                 
-                if len(subscript_token.items) == 1 and subscript_token.items[0].type == "NUMBER":
-                    index = subscript_token.items[0].value
+                if len(subscript_value) == 1 and subscript_value[0].type == "NUMBER":
+                    index = subscript_value[0].value
 
-                if index <= len(array_token.items):
-                    element_token = array_token.items[index - 1]
+                if index <= len(source_list):
+                    element_token = source_list[index - 1]
                     self.stack[position] = element_token
-                    self.stack.pop(position + 1)
+                    self.clearGarbage(position + 1)
                 else:
                     # Out of array bounds
                     pass
@@ -316,19 +343,18 @@ class Evaluator:
             if self.stack[position].type == "ASSIGN":
                 if self.stack[position - 1].type == "LESSER":
                     self.stack[position - 1].type = "LTE"
-                    self.stack.pop(position)
+                    self.clearGarbage(position)
                 elif self.stack[position - 1].type == "GREATER":
                     self.stack[position - 1].type = "GTE"
-                    self.stack.pop(position)
+                    self.clearGarbage(position)
             elif self.stack[position].type == "CONDITION":
                 if self.stack[position - 1].type == "NAME" and self.stack[position - 1].value == "else":
-                    self.stack.pop(position)
+                    self.clearGarbage(position)
 
     # key function
     def evaluate(self):
         self.runGrouper()
         self.processCompoundOperations()
-        self.replaceKnownVars()
         self.manageArrayIndices()
 
         if self.debug:
@@ -371,23 +397,33 @@ class Evaluator:
 
     def somethingRemains(self):
         for item in self.stack:
-            if item.type == "NUMBER" or item.type == "STRING":
+            if item.type == "NUMBER" or item.type == "STRING" or item.type == "LIST" or item.type == "NAME":
                 return True
         return False
 
     def printRemaining(self):
-        for item in self.stack:
-            if item.value is not None:
+        for position, item in enumerate(self.stack):
+            if item.type == "NAME":
+                print(self.getValue(position))
+            elif item.type == "NUMBER" or item.type == "STRING":
                 print(item.value)
+            elif item.type == "LIST":
+                output_string = "["
+                for element in item.items:
+                    output_string += str(element.value) + " "
+                output_string += "\b]"
+                print(output_string)
             else:
                 print(item.type)
 
     def getRemainingEntity(self):
         remaining_entities = []
 
-        for item in self.stack:
-            if item.type == "NUMBER" or item.type == "STRING":
+        for position, item in enumerate(self.stack):
+            if item.type == "NUMBER" or item.type == "STRING" or item.type == "LIST":
                 remaining_entities.append(item)
+            elif item.type == "NAME":
+                remaining_entities.append(autoMake(self.getValue(position)))
 
         if len(remaining_entities) == 0:
             return None
@@ -413,6 +449,25 @@ class Evaluator:
 
     def elseBlockExists(self, block_level):
         return len(self.stack) > 3 * block_level + 1 and self.stack[3 * block_level].value == "else" and self.stack[3 * block_level + 1].type == "BLOCK"
+
+    def clearGarbage(self, *positions):
+        sorted_positions = sorted(positions, reverse = True)
+        for position in sorted_positions:
+            self.stack.pop(position)
+
+    def getValue(self, position):
+        entity = self.stack[position]
+
+        if entity.type == "NUMBER" or entity.type == "STRING":
+            return entity.value
+        elif entity.type == "LIST":
+            return entity.items
+        elif entity.type == "NAME":
+            type = vars.getType(entity.value)
+            if type == "NUMBER" or type == "STRING":
+                return vars.getVarValue(entity.value)
+            elif type == "LIST":
+                return vars.getVarItems(entity.value)
 
     def __str__(self):
         output_string = f"EVALUATOR STACK (depth {self.depth}): "

@@ -1,4 +1,5 @@
 import math
+import webbrowser
 
 ####################
 # Binary functions #
@@ -150,7 +151,19 @@ def abs(a):
 def frac(a):
     return a - math.floor(a)
 
-# List operations
+def google(a):
+    search_term = str(a).replace(" ", "+")
+    url = "https://www.google.com/search?q=" + search_term
+    webbrowser.open(url)
+
+def youtube(a):
+    search_term = str(a).replace(" ", "+")
+    url = "https://www.youtube.com/results?search_query=" + search_term
+    webbrowser.open(url)
+
+###################
+# List operations #
+###################
 
 def mean(list):
     sum = 0

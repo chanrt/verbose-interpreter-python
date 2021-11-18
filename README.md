@@ -12,13 +12,12 @@
 # A verbose program intended to showcase it's current features
 # Type "python verbose.py program.txt" to run this program
 
-# Prints "Hello, World!"
-say "Hello, World!"
+say "Hello, World!" # Prints "Hello, World!"
 
 # Prints firstName and lastName together
 firstName is "Jane"
 lastName is "Doe"
-print "Full name: " + firstName and lastName
+print "Full name: " + (firstName and lastName)
 
 # Finds hypotenuse of a triangle
 a = 3
@@ -36,10 +35,24 @@ print "Speed of light: " + 1 / sqrt($mu_0 * $epsilon_0)
 numbers are [1 2 3 4 5]
 print "Mean: " + (mean of numbers)
 
-# Prints numbers from 1 to 10
-num = 1
-print "Here comes numbers from 1 to 10:"
-while `num is lesser than 11` { print num ; num = num + 1 }
+# Prints if given number is prime or composite
+num = 18
+i = 1
+num_factors = 0
+
+while i < num {
+    if num % i == 0 {
+        increment num_factors
+    }
+    increment i
+}
+
+if num_factors > 1 {
+    print "Composite"
+} else {
+    print "Prime"
+}
+
 
  ```
 
@@ -54,9 +67,11 @@ while `num is lesser than 11` { print num ; num = num + 1 }
  8) A Line can be commenented out by entering # at the beginning
  9) File compiler mode generates logs inside the logs.txt file, containing the lexical, evaluator (at all depths) and variable stacks at various points in the program
  10) Arrays can be written and assigned to variables. Operations on arrays (like mean and lcm) have also been implemented. Single elements can be referenced by indexing (starts from 1 instead of 0), but elements obtained from indexing cannot be assigned yet
- 11) While loops have been implemented (still buggy though)
+ 11) Array functions such as prepend, append and insert have been implemented
+ 12) While loops have been implemented
+ 13) Conditionals have been successfully implemented
  
  Planned Features:
- 1) Array indexing assignment, for loops and conditionals will be implemented (preferably in that order) for this language to have semblance of Turing completeness
+ 1) for loops, both in Clang format and as an iterator of iterables
  2) Ability for the user to define functions
  3) Error reporting system. Currently, any errors will be shown from the python interpreter's viewpoint
